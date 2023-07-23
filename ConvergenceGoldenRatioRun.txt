@@ -1,0 +1,78 @@
+ian@ian-Latitude-3190-2-in-1:~$ gnat compile conv.adb
+x86_64-linux-gnu-gcc-10 -c conv.adb
+conv.adb:3:11: warning: file name does not match unit name, should be "golden_ratio_convergence.adb"
+ian@ian-Latitude-3190-2-in-1:~$ ls conv*
+conv.ada  conv.adb  conv.ali  conv.o
+ian@ian-Latitude-3190-2-in-1:~$ gnatbind conv
+ian@ian-Latitude-3190-2-in-1:~$ gnatlink conv
+ian@ian-Latitude-3190-2-in-1:~$ ls conv*
+conv  conv.ada  conv.adb  conv.ali  conv.o
+ian@ian-Latitude-3190-2-in-1:~$ ./conv
+Result: 1.618032786885245 after 14 iterations
+The error is approximately -0.000001201864649
+ian@ian-Latitude-3190-2-in-1:~$ cat conv.adb
+with ada.text_io; use ada.text_io;
+
+procedure golden_ratio_convergence is
+
+  -- This is a fixed-point type. I typed a bunch of "0"
+  -- without counting them.
+  type number is delta 0.000000000000001 range -10.0 .. 10.0;
+
+  one : constant number := number (1.0);
+  phi : constant number := number (1.61803398874989484820458683436563811772030917980576286213544862270526046281890244970720720418939113748475); -- OEIS A001622
+  phi0, phi1 : number;
+  count : integer;
+
+begin
+  count := 1;
+  phi0 := 1.0;
+  phi1 := (one + (one / phi0));
+  while abs (phi1 - phi0) > number (1.0e-5) loop
+    count := count + 1;
+    phi0 := phi1;
+    phi1 := (one + (one / phi0));
+  end loop;
+  put ("Result:");
+  put (phi1'image);
+  put (" after");
+  put (count'image);
+  put_line (" iterations");
+  put ("The error is approximately ");
+  put_line (number'image (phi1 - phi));
+end golden_ratio_convergence;
+
+ian@ian-Latitude-3190-2-in-1:~$ sloccount conv.adb
+Have a non-directory at the top, so creating directory top_dir
+Adding /home/ian/conv.adb to top_dir
+Categorizing files.
+Finding a working MD5 command....
+Found a working MD5 command.
+Computing results.
+
+
+SLOC	Directory	SLOC-by-Language (Sorted)
+24      top_dir         ada=24
+
+
+Totals grouped by language (dominant language first):
+ada:             24 (100.00%)
+
+
+
+
+Total Physical Source Lines of Code (SLOC)                = 24
+Development Effort Estimate, Person-Years (Person-Months) = 0.00 (0.05)
+ (Basic COCOMO model, Person-Months = 2.4 * (KSLOC**1.05))
+Schedule Estimate, Years (Months)                         = 0.07 (0.79)
+ (Basic COCOMO model, Months = 2.5 * (person-months**0.38))
+Estimated Average Number of Developers (Effort/Schedule)  = 0.06
+Total Estimated Cost to Develop                           = $ 538
+ (average salary = $56,286/year, overhead = 2.40).
+SLOCCount, Copyright (C) 2001-2004 David A. Wheeler
+SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
+SLOCCount comes with ABSOLUTELY NO WARRANTY, and you are welcome to
+redistribute it under certain conditions as specified by the GNU GPL license;
+see the documentation for details.
+Please credit this data as "generated using David A. Wheeler's 'SLOCCount'."
+ian@ian-Latitude-3190-2-in-1:~$ 
